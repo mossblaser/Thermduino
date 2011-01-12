@@ -4,17 +4,23 @@
 #include <WProgram.h>
 
 #include <Persistant.h>
+#include <Clock.h>
 #include <CalibratedServo.h>
 
 
 class System {
 	private:
 		typedef enum status {
-			STATUS_NO_PROGRAMS,
-			STATUS_PROGRAMED,
-			STATUS_PROGRAM_RUNNING,
-			STATUS_TIME_OUT_OF_SYNC,
+			STATUS_TIME_OUT_OF_SYNC = 0,
+			STATUS_NO_PROGRAMS      = 1,
+			STATUS_PROGRAMED        = 2,
+			STATUS_PROGRAM_RUNNING  = 3,
 		} status_t;
+		
+		typedef enum response {
+			FALIURE = 0,
+			SUCCESS = 1,
+		} response_t;
 	
 	public:
 		PersistantSettings settings;
@@ -36,6 +42,8 @@ class System {
 		void setStatus(status_t status);
 		status_t getStatus(void);
 		
+		void tick(void);
+		
 		void setLED(void);
 		
 		void handleCommands(void);
@@ -47,6 +55,10 @@ class System {
 		status_t status;
 		
 		CalibratedServo thermostat;
+		
+		uint8_t lastDayNumber;
+		uint8_t lastDayOfWeek;
+		Clock clock;
 };
 
 

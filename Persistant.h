@@ -4,12 +4,13 @@
 #include <WProgram.h>
 #include <EEPROM.h>
 
+#include <Clock.h>
 #include <CalibratedServo.h>
 
 
 #define PERSISTANT_GETTER_SETTER(addr, gname, sname) \
 	uint8_t gname(void         ) { return EEPROM.read(addr); }; \
-	void    sname(uint8_t value) { EEPROM.write(addr, value); }
+	void    sname(uint8_t value) { /*EEPROM.write(addr, value);*/ }
 
 
 class PersistantSettings {
@@ -34,8 +35,18 @@ class PersistantSettings {
 		                         getDefaultTemperature,
 		                         setDefaultTemperature);
 		
+		PERSISTANT_GETTER_SETTER(CLOCK_DAY_NUMBER,
+		                         getDayNumber,
+		                         setDayNumber);
+		PERSISTANT_GETTER_SETTER(CLOCK_DAY_OF_WEEK,
+		                         getDayOfWeek,
+		                         setDayOfWeek);
+		
 		void calibrateServo(CalibratedServo &servo);
 		void saveServoCalibration(CalibratedServo &servo);
+		
+		void loadClock(Clock &clock);
+		void saveClock(Clock &clock);
 	
 	private:
 		enum {
@@ -44,6 +55,8 @@ class PersistantSettings {
 			CAL_MAX_ANGLE,
 			CAL_MAX_TEMPERATURE,
 			DEFAULT_TEMPERATURE,
+			CLOCK_DAY_NUMBER,
+			CLOCK_DAY_OF_WEEK,
 		};
 	
 };

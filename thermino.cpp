@@ -13,6 +13,7 @@ void setup()
 	Serial.begin(9600);
 	system.setLEDPin(LED_PIN);
 	system.setThermostatPin(SERVO_PIN);
+	system.tick();
 }
 
 
@@ -20,6 +21,7 @@ void
 loop()
 {
 	system.handleCommands();
+	system.tick();
 	system.setTemperature();
 	system.setLED();
 }
