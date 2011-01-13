@@ -26,13 +26,15 @@ System::tick(void)
 void
 System::setLED(void)
 {
+	static bool ledState = false;
 	uint8_t pattern = 0;
 	
 	switch (getStatus()) {
+		case(STATUS_TIME_OUT_OF_SYNC): pattern = 0x55; break; // Fast flashing
 		case(STATUS_NO_PROGRAMS):      pattern = 0x00; break; // Off
 		case(STATUS_PROGRAMED):        pattern = 0xFF; break; // Solid
-		case(STATUS_PROGRAM_RUNNING):  pattern = 0xFE; break; // Slow flashing
-		case(STATUS_TIME_OUT_OF_SYNC): pattern = 0x55; break; // Fast flashing
+		case(STATUS_PROGRAM_RUNNING):  pattern = 0xFE; break; // On Long
+		case(STATUS_WEEKDAY_RUNNING):  pattern = 0x01; break; // On Short
 		default:                       pattern = 0x00; break;
 	}
 	
@@ -53,6 +55,7 @@ System::setTemperature(void)
 	int temperature = defaultTemperature;
 	
 	bool isProgramRunning = false;
+	bool isWeekdayRunning = false;
 	bool isProgramNotExpired = false;
 	
 	int i;
@@ -61,6 +64,8 @@ System::setTemperature(void)
 			temperature = programmes[i].getTemperature();
 			if (!programmes[i].isWeekday())
 				isProgramRunning = true;
+			else
+				isWeekdayRunning = true;
 		} else {
 			if (!programmes[i].isWeekday() && !programmes[i].isExpired(clock))
 				isProgramNotExpired = true;
@@ -71,6 +76,8 @@ System::setTemperature(void)
 	if (getStatus() != STATUS_TIME_OUT_OF_SYNC) {
 		if (isProgramRunning)
 			setStatus(STATUS_PROGRAM_RUNNING);
+		else if (isWeekdayRunning)
+			setStatus(STATUS_WEEKDAY_RUNNING);
 		else if (isProgramNotExpired)
 			setStatus(STATUS_PROGRAMED);
 		else

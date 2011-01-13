@@ -113,23 +113,25 @@ System::handleCommands(void)
 				break;
 			
 			case ('P'): // Recieve programme data
-				int reqNumProgrammes = blockingRead();
-				for (int i = 0; i < reqNumProgrammes; i++) {
-					uint8_t f0, f1, f2, f3, f4;
-					f0 = blockingRead();
-					f1 = blockingRead();
-					f2 = blockingRead();
-					f3 = blockingRead();
-					f4 = blockingRead();
-					if (reqNumProgrammes < MAX_PROGRAMMES)
-						programmes[i].setFromData(f0, f1, f2, f3, f4);
-				}
-				if (reqNumProgrammes < MAX_PROGRAMMES) {
-					numProgrammes = reqNumProgrammes;
-					settings.saveProgrammes(numProgrammes, programmes);
-					write((char)SUCCESS);
-				} else {
-					write((char)FALIURE);
+				{
+					int reqNumProgrammes = blockingRead();
+					for (int i = 0; i < reqNumProgrammes; i++) {
+						uint8_t f0, f1, f2, f3, f4;
+						f0 = blockingRead();
+						f1 = blockingRead();
+						f2 = blockingRead();
+						f3 = blockingRead();
+						f4 = blockingRead();
+						if (reqNumProgrammes < MAX_PROGRAMMES)
+							programmes[i].setFromData(f0, f1, f2, f3, f4);
+					}
+					if (reqNumProgrammes < MAX_PROGRAMMES) {
+						numProgrammes = reqNumProgrammes;
+						settings.saveProgrammes(numProgrammes, programmes);
+						write((char)SUCCESS);
+					} else {
+						write((char)FALIURE);
+					}
 				}
 				break;
 		}

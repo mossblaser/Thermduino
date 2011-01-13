@@ -6,8 +6,7 @@
 
 
 System::System(void)
-	: ledState(false)
-	, ledPin(13)
+	: ledPin(13)
 	, defaultTemperature(0)
 	, status(STATUS_TIME_OUT_OF_SYNC)
 	, thermostat()

@@ -8,7 +8,7 @@
 #include <CalibratedServo.h>
 #include <Programme.h>
 
-#define MAX_PROGRAMMES 10
+#define MAX_PROGRAMMES 50
 
 
 class System {
@@ -18,6 +18,7 @@ class System {
 			STATUS_NO_PROGRAMS      = 1,
 			STATUS_PROGRAMED        = 2,
 			STATUS_PROGRAM_RUNNING  = 3,
+			STATUS_WEEKDAY_RUNNING  = 4,
 		} status_t;
 		
 		typedef enum response {
@@ -52,7 +53,6 @@ class System {
 		void handleCommands(void);
 	
 	private:
-		bool ledState;
 		int  ledPin;
 		
 		int defaultTemperature;
