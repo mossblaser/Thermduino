@@ -6,6 +6,9 @@
 #include <Persistant.h>
 #include <Clock.h>
 #include <CalibratedServo.h>
+#include <Programme.h>
+
+#define MAX_PROGRAMMES 10
 
 
 class System {
@@ -49,7 +52,9 @@ class System {
 		void handleCommands(void);
 	
 	private:
-		int ledPin;
+		bool ledState;
+		int  ledPin;
+		
 		int defaultTemperature;
 		
 		status_t status;
@@ -59,6 +64,15 @@ class System {
 		uint8_t lastDayNumber;
 		uint8_t lastDayOfWeek;
 		Clock clock;
+		
+		void write(char value);
+		void uLongWrite(unsigned long value);
+		
+		char blockingRead(void);
+		unsigned long blockingULongRead(void);
+		
+		uint8_t numProgrammes;
+		Programme programmes[MAX_PROGRAMMES];
 };
 
 

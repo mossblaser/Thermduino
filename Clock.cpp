@@ -1,8 +1,8 @@
 #include <WProgram.h>
 
-#include <Persistant.h>
+#include <Clock.h>
 
-#define SECS_PER_DAY (24*60*60)
+#define SECS_PER_DAY 86400
 
 
 Clock::Clock(void)
@@ -10,6 +10,7 @@ Clock::Clock(void)
 	, dayNumber(0)
 	, dayOfWeek(0)
 	, lastMillis(0)
+	, startTime(0)
 {
 	// Do nothing...
 }
@@ -17,9 +18,13 @@ Clock::Clock(void)
 
 void Clock::setDayNumber(uint8_t value) { dayNumber = value; }
 void Clock::setDayOfWeek(uint8_t value) { dayOfWeek = value; }
+void Clock::setStartTime(unsigned long value) { startTime = value; }
+void Clock::setSecsToday(unsigned long value) { secsToday = value; }
 
 uint8_t Clock::getDayNumber(void) { return dayNumber; }
 uint8_t Clock::getDayOfWeek(void) { return dayOfWeek; }
+unsigned long Clock::getStartTime(void) { return startTime; }
+unsigned long Clock::getSecsToday(void) { return secsToday; }
 
 
 void

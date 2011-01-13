@@ -1,5 +1,6 @@
 #include <WProgram.h>
 #include <System.h>
+#include <EEPROM.h>
 
 #define LED_PIN   13
 #define SERVO_PIN 9
