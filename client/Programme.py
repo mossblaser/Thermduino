@@ -5,7 +5,7 @@ import time, datetime
 
 
 # Match a date
-DATE_RX = r"(?:(\d{1,2})/(\d{1,2})/(\d{2,4}))"
+DATE_RX = r"(?:(\d{1,2})[/.](\d{1,2})[/.](\d{2,4}))"
 
 # Match a time
 TIME_RX = r"(?:(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)"
@@ -25,7 +25,7 @@ DAY_NAMES = [
 DAY_RX = r"(?:%s)"%("|".join(sum(DAY_NAMES, [])))
 
 # Valid Seperators for a list of weekdays
-DAY_SEP_RX = r"(?:,?\s+)"
+DAY_SEP_RX = r"(?:(?:\s*,|\s+and)?\s+)"
 
 
 def parse_days(raw):
@@ -127,13 +127,18 @@ class Programme(object):
 	TIME_CONVERSION_RATIO = 900
 	
 	
-	def __init__(self):
+	def __init__(self, *args):
 		self._weekday      = None
 		self._start_date   = None
 		self._end_date     = None
 		self._days_of_week = None
 		self._start_time   = None
 		self._end_time     = None
+		
+		if len(args) == 6:
+			self.set_from_data(*args)
+		elif len(args) == 1:
+			self.parse(*args)
 	
 	
 	def set_weekday(self, value):
@@ -257,7 +262,7 @@ class Programme(object):
 		if self.weekday:
 			# Weekday programmes never expire (but they can be useless and not apply
 			# to any days).
-			return self.week_bits != 0
+			return self.week_bits == 0
 		else:
 			# Has the end-date passed?
 			return (self.end_date < now.date()
@@ -273,7 +278,7 @@ class Programme(object):
 		output = ""
 		
 		# Temperature
-		output += "%dc "%(self.temperature)
+		output += "%d*c "%(self.temperature)
 		
 		if self.weekday:
 			days = (day for (_, day) in
@@ -309,6 +314,10 @@ class Programme(object):
 		return output.strip()
 	
 	
+	def __repr__(self):
+		return "Programme(%s)"%repr(str(self))
+	
+	
 	def parse(self, raw):
 		"""
 		Parse a string in the format produced by __str__ and set this Programme to
@@ -327,9 +336,9 @@ class Programme(object):
 			r"(?P<temperature>\d{1,2})(?:\s*(?:[*]c|c))?\s+" + # Temperature
 			r"(?:" +
 				# One-off programme
-					r"from\s+" +
+					r"(?:from|between)\s+" +
 					r"(?P<start>%(date)s?(?:\s+%(time)s)?)" + # Start date/time
-					r"\s+to\s+"+
+					r"\s+(?:to|and)\s+"+
 					r"(?P<end>%(date)s?(?:\s+%(time)s)?)" + # End date/time
 				
 				r"|" +
