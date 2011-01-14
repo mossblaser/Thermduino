@@ -189,6 +189,7 @@ class MainWindow(MainWindowBase):
 		if self.arduino is not None:
 			try:
 				self.arduino._set_default_temperature(self.default_temperature.GetValue())
+				self.refresh_dashboard()
 			except:
 				self.disconnect()
 				raise
