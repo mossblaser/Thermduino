@@ -11,7 +11,7 @@ class CalibratedServo : public Servo {
 		~CalibratedServo(void);
 		
 		uint8_t getTemperature(void);
-		void    setTemperature(uint8_t temperature);
+		void    setTemperature(uint8_t temperature, bool twitch);
 		
 		uint8_t getMinAngle(void);
 		uint8_t getMinTemperature(void);

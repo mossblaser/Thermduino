@@ -22,7 +22,7 @@ CalibratedServo::~CalibratedServo(void)
 
 
 void
-CalibratedServo::setTemperature(uint8_t temperature)
+CalibratedServo::setTemperature(uint8_t temperature, bool twitch)
 {
 	if (temperature > getMaxTemperature()) temperature = getMaxTemperature();
 	if (temperature < getMinTemperature()) temperature = getMinTemperature();
@@ -33,6 +33,9 @@ CalibratedServo::setTemperature(uint8_t temperature)
 	int angle = ((((int)temperature - (int)getMinTemperature()) * (int)deltaAngle)
 	             / (int)deltaTemp)
 	            + getMinAngle();
+	
+	angle += twitch;
+	
 	if (angle <= getMaxAngle() && angle >= getMinAngle())
 		write(angle);
 }

@@ -87,5 +87,9 @@ System::setTemperature(void)
 			setStatus(STATUS_NO_PROGRAMS);
 	}
 	
-	thermostat.setTemperature(temperature);
+	static unsigned int twitch_count = 0;
+	static bool twitch = false;
+	twitch = twitch ^ ((++twitch_count)==0);
+	
+	thermostat.setTemperature(temperature, twitch);
 }
