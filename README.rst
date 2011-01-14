@@ -27,6 +27,7 @@ Code Quality (a disclaimer...)
 ------------------------------
 
 The code in this project is very rough and many areas need refactoring and
-documenting, particularly in the python client.
+documenting, particularly in the python client. Oh, and about that regular
+expression...
 
 
