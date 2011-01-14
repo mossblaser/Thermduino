@@ -74,6 +74,7 @@ class MainWindow(MainWindowBase):
 		if self.arduino is not None:
 			self.arduino.kill(*args, **kwargs)
 		self.set_connected(False)
+		self.arduino = None
 	
 	
 	def on_connect_click(self, event):
