@@ -7,7 +7,7 @@ from BackgroundArduino import BackgroundArduino
 from Programme import Programme, ParseError
 
 
-RECONNECT_FREQUENCY = 60
+RECONNECT_FREQUENCY = 10
 
 
 class MainWindow(MainWindowBase):
@@ -25,7 +25,10 @@ class MainWindow(MainWindowBase):
 		self.serial_port.ChangeValue(serial_port)
 		
 		# Connect to the arduino
-		self.connect()
+		try:
+			self.connect()
+		except:
+			pass # Oh well...
 		
 		self._last_connected = 0
 	
