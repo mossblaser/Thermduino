@@ -53,3 +53,5 @@ class MainWindow(MainWindowBase):
 		self.max_temp.Enable(self.calibrating and connected)
 		self.max_angle.Enable(self.calibrating and connected)
 		self.edit_calibration.Enable(connected)
+		
+		self.connect_btn.SetLabel("Reconnect" if connected else "Connect")

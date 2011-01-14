@@ -89,6 +89,10 @@ class MainWindow(MainWindowBase):
 		self._last_connected = 0
 		self.reset_programmes()
 		self.edit_calibration.SetValue(False)
+		
+		temp = self.arduino._get_default_temperature()
+		if self.default_temperature.GetValue() != temp:
+			self.default_temperature.SetValue(temp)
 	
 	
 	def on_close(self, event):
@@ -121,9 +125,6 @@ class MainWindow(MainWindowBase):
 				
 				_, min_temp, _, max_temp = self.arduino._get_calibration()
 				self.default_temperature.SetRange(min_temp, max_temp)
-				temp = self.arduino._get_default_temperature()
-				if self.default_temperature.GetValue() != temp:
-					self.default_temperature.SetValue(temp)
 				
 				self.temperature.SetLabel(str(self.arduino._get_temperature()))
 			
