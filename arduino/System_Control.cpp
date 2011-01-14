@@ -80,6 +80,7 @@ System::handleCommands(void)
 			
 			case ('D'): // Set default temperature
 				setDefaultTemperature(blockingRead());
+				settings.setDefaultTemperature(getDefaultTemperature());
 				write((char)SUCCESS);
 				break;
 			

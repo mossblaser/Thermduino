@@ -62,10 +62,13 @@ System::setTemperature(void)
 	for (i = 0; i < numProgrammes; i++) {
 		if (programmes[i].isActive(clock)) {
 			temperature = programmes[i].getTemperature();
-			if (!programmes[i].isWeekday())
+			if (!programmes[i].isWeekday()) {
 				isProgramRunning = true;
-			else
+				isWeekdayRunning = false;
+			} else{ 
 				isWeekdayRunning = true;
+				isProgramRunning = false;
+			}
 		} else {
 			if (!programmes[i].isWeekday() && !programmes[i].isExpired(clock))
 				isProgramNotExpired = true;

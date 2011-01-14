@@ -29,6 +29,7 @@ class CalibratedServo : public Servo {
 		uint8_t minTemperature;
 		uint8_t maxAngle;
 		uint8_t maxTemperature;
+		uint8_t lastTemperature;
 	
 };
 

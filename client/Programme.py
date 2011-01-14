@@ -3,6 +3,9 @@
 import re
 import time, datetime
 
+class ParseError(Exception):
+	pass
+
 
 # Match a date
 DATE_RX = r"(?:(\d{1,2})[/.](\d{1,2})[/.](\d{2,4}))"
@@ -69,6 +72,8 @@ def parse_datetime(raw):
 	Returns a tuple with a datetime.date and a daytime (int).
 	"""
 	
+	if raw is None:
+		return None, 0
 	regex = re.compile(r"%s(?:\s+%s)?$"%(DATE_RX, TIME_RX))
 	dd,mm,yyyy, HH,MM,AMPM = regex.match(raw).groups()
 	
@@ -149,7 +154,7 @@ class Programme(object):
 	
 	
 	def set_start_date(self, value):
-		if self.weekday: raise Exception("Weekday programme has no start date.")
+		if self.weekday: raise ParseError("Weekday programme has no start date.")
 		self._start_date = value
 	def get_start_date(self):
 		if self.weekday: return None
@@ -158,7 +163,7 @@ class Programme(object):
 	
 	
 	def set_end_date(self, value):
-		if self.weekday: raise Exception("Weekday programme has no end date.")
+		if self.weekday: raise ParseError("Weekday programme has no end date.")
 		self._end_date = value
 	def get_end_date(self):
 		if self.weekday: return None
@@ -167,7 +172,7 @@ class Programme(object):
 	
 	
 	def set_days_of_week(self, value):
-		if not self.weekday: raise Exception("One-off programme has no days of week.")
+		if not self.weekday: raise ParseError("One-off programme has no days of week.")
 		self._days_of_week = value
 	def get_days_of_week(self):
 		if not self.weekday: return None
@@ -233,7 +238,7 @@ class Programme(object):
 		else:
 			day_number = (self.start_date - day_zero).days
 			if self.start_date < day_zero or day_number > 0xFE:
-				raise Exception("Day number out of range!")
+				raise ParseError("Day number out of range!")
 			f0 = day_number
 		
 		# Field 1 is the starting time
@@ -247,7 +252,7 @@ class Programme(object):
 		
 		# Field 4 is the temperature
 		if not 0 < self.temperature <= 0xFF:
-			raise Exception("Temperature out of range!")
+			raise ParseError("Temperature out of range!")
 		f4 = self.temperature
 		
 		return (f0,f1,f2,f3,f4)
@@ -336,10 +341,10 @@ class Programme(object):
 			r"(?P<temperature>\d{1,2})(?:\s*(?:[*]c|c))?\s+" + # Temperature
 			r"(?:" +
 				# One-off programme
-					r"(?:from|between)\s+" +
+					r"(?:on|from|between)\s+" +
 					r"(?P<start>%(date)s?(?:\s+%(time)s)?)" + # Start date/time
-					r"\s+(?:to|and)\s+"+
-					r"(?P<end>%(date)s?(?:\s+%(time)s)?)" + # End date/time
+					r"(?:\s+(?:to|and)\s+"+
+					r"(?P<end>%(date)s?(?:\s+%(time)s)?))?" + # End date/time
 				
 				r"|" +
 				
@@ -369,7 +374,7 @@ class Programme(object):
 		# Match the user's input
 		match = regex.match(raw)
 		if match is None:
-			raise Exception("Could not parse input!")
+			raise ParseError("Could not parse input!")
 		
 		# Extract fields
 		temperature_m = match.group("temperature")
@@ -391,7 +396,10 @@ class Programme(object):
 		if not self.weekday:
 			# Got a one-off programme
 			self.start_date, self.start_time = parse_datetime(start_m)
-			self.end_date, self.end_time = parse_datetime(end_m)
+			end_date, self.end_time = parse_datetime(end_m)
+			self.end_date = (self.start_date + datetime.timedelta(1)
+			                 if end_date is None else
+			                 end_date)
 			
 		else:
 			# Got a weekday programme

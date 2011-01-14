@@ -180,34 +180,15 @@ class Arduino(object):
 		# Sync the clock to use new day_zero number
 		self.sync_clock(today_day_number)
 		
+		data = []
+		for programme in programmes:
+			data.extend(programme.get_data(day_zero))
+		data = [chr(d) for d in data]
+		
 		self.write("P")
 		self.writeByte(len(programmes))
-		
-		for programme in programmes:
-			for byte in programme.get_data(day_zero):
-				self.writeByte(byte)
+		for byte in data:
+			self.write(byte)
 		
 		if (self.readByte() != 0x01):
 			raise Exception("Error loading programmes!")
-
-
-
-t = Arduino("/dev/ttyUSB0", 9600)
-
-programmes = [
-	Programme("12*c on saturdays and sundays"),
-	Programme("10*c on thu"),
-	Programme("20*c between 11.1.11 and 18.1.11"),
-	Programme("30*c on thu after 11:45pm"),
-]
-
-for p in programmes:
-	print "To be loaded:", repr(p)
-
-t.set_programmes(programmes)
-
-
-ps = t.get_programmes()
-for p in ps:
-	print "On Device:", repr(p)
-

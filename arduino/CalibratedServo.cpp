@@ -9,6 +9,7 @@ CalibratedServo::CalibratedServo(void)
 	, minTemperature(0)
 	, maxAngle(0)
 	, maxTemperature(0)
+	, lastTemperature(0)
 {
 	// Do nothing...
 }
@@ -23,8 +24,12 @@ CalibratedServo::~CalibratedServo(void)
 void
 CalibratedServo::setTemperature(uint8_t temperature)
 {
+	if (temperature > getMaxTemperature()) temperature = getMaxTemperature();
+	if (temperature < getMinTemperature()) temperature = getMinTemperature();
+	lastTemperature = temperature;
 	int deltaTemp = getMaxTemperature() - getMinTemperature();
 	int deltaAngle = getMaxAngle() - getMinAngle();
+	if (deltaTemp == 0) return;
 	int angle = ((((int)temperature - (int)getMinTemperature()) * (int)deltaAngle)
 	             / (int)deltaTemp)
 	            + getMinAngle();
@@ -36,12 +41,7 @@ CalibratedServo::setTemperature(uint8_t temperature)
 uint8_t
 CalibratedServo::getTemperature(void)
 {
-	int deltaTemp = getMaxTemperature() - getMinTemperature();
-	int deltaAngle = getMaxAngle() - getMinAngle();
-	int temperature = ((((int)read() - (int)getMinAngle()) * (int)deltaTemp)
-	                   / (int)deltaAngle)
-	                  + getMinTemperature();
-	return temperature;
+	return lastTemperature;
 }
 
 
