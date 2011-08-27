@@ -22,7 +22,7 @@ System::System(void)
 void
 System::setThermostatPin(int pin)
 {
-	thermostat.attach(pin);
+	thermostat.setPin(pin);
 }
 
 

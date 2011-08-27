@@ -22,8 +22,18 @@ CalibratedServo::~CalibratedServo(void)
 
 
 void
-CalibratedServo::setTemperature(uint8_t temperature, bool twitch)
+CalibratedServo::setPin(int pin)
 {
+	this->pin = pin;
+}
+
+
+void
+CalibratedServo::setTemperature(uint8_t temperature)
+{
+	static uint8_t       lastTemp = 0;
+	static unsigned long detatchTime = 0;
+	
 	if (temperature > getMaxTemperature()) temperature = getMaxTemperature();
 	if (temperature < getMinTemperature()) temperature = getMinTemperature();
 	lastTemperature = temperature;
@@ -34,10 +44,16 @@ CalibratedServo::setTemperature(uint8_t temperature, bool twitch)
 	             / (int)deltaTemp)
 	            + getMinAngle();
 	
-	angle += twitch;
+	if (temperature != lastTemp) {
+		detatchTime = millis() + 1500ul;
+		lastTemp = temperature;
+		attach(pin);
+	} else if (attached() && (millis() > detatchTime)) {
+		detach();
+	}
 	
 	if (angle <= getMaxAngle() && angle >= getMinAngle())
-		write(angle);
+		write(180-angle);
 }
 
 
